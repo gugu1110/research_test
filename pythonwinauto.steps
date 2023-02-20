@@ -1,0 +1,35 @@
+from behave import *
+from pywinauto import Desktop
+
+@given("the Windows Calculator is open")
+def step_impl(context):
+    # Instantiate the driver for the Calculator application
+    context.app = Desktop(backend='uia').window(title='Calculator')
+
+@when('I enter "{number}" in the calculator')
+def step_impl(context, number):
+    # Click the number button
+    context.app[f'num{number}Button'].click()
+
+@when("I click the '+' button")
+def step_impl(context):
+    # Click the '+' button
+    context.app['plusButton'].click()
+
+@when('I click the "=" button')
+def step_impl(context):
+    # Click the '=' button
+    context.app['equalButton'].click()
+
+@then('the result should be "{expected_result}"')
+def step_impl(context, expected_result):
+    # Get the result value
+    result = context.app['CalculatorResults'].children()[0].get_value()
+
+    # Assert the result
+    assert result == expected_result
+
+@after.all
+def close_app(context):
+    # Close the application
+    context.app.close()
