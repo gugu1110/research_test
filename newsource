@@ -1,0 +1,64 @@
+├── features
+│   ├── steps
+│   │   └── notepad_steps.py
+│   └── notepad.feature
+└── notepad.py
+
+features/notepad.feature
+Feature: Notepad automation
+
+  Scenario: Open Notepad and type text
+    Given Notepad is open
+    When the text "Hello, Pywinauto!" is typed
+    And the file is saved as "test.txt"
+    Then Notepad is closed
+notepad_steps.py
+from behave import *
+from pywinauto import Application
+
+@given('Notepad is open')
+def step_impl(context):
+    # Launch Notepad application
+    app = Application().start('notepad.exe')
+    # Attach to the main window
+    context.window = app.window(title='Untitled - Notepad')
+
+@when('the text "{text}" is typed')
+def step_impl(context, text):
+    # Type the specified text
+    context.window.type_keys(text)
+
+@when('the file is saved as "{filename}"')
+def step_impl(context, filename):
+    # Save the file with the specified name
+    context.window.menu_select('File->Save')
+    save_window = context.window['Save As']
+    save_window['Edit'].type_keys(filename)
+    save_window['Save'].click()
+
+@then('Notepad is closed')
+def step_impl(context):
+    # Close the application
+    context.window.close()
+
+notepad.py
+This file is not part of the Behave test, but it demonstrates how to use Pywinauto to interact with the Notepad application.
+from pywinauto import Application
+
+# Launch Notepad application
+app = Application().start('notepad.exe')
+# Attach to the main window
+window = app.window(title='Untitled - Notepad')
+
+# Type some text
+window.type_keys('Hello, Pywinauto!')
+
+# Save the file
+window.menu_select('File->Save')
+save_window = window['Save As']
+save_window['Edit'].type_keys('test.txt')
+save_window['Save'].click()
+
+# Close the application
+window.close()
+
